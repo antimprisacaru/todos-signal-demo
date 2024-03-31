@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { setContext } from '@apollo/client/link/context';
 import type { NormalizedCacheObject } from '@apollo/client/cache/inmemory/types';
+import { API_URL_TOKEN } from './api-url-token.provider';
 
 const basicContext = setContext((_, { headers }) => {
   return {

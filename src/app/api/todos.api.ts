@@ -1,6 +1,7 @@
 import { gql } from 'apollo-angular';
+import { Todo } from '../models/todo.model';
 
-const GET_TODOS_QUERY = gql<{ getTodos: Todo[] }, never>`
+export const GET_TODOS_QUERY = gql<{ getTodos: Todo[] }, never>`
     query GetTodos {
         getTodos {
             id
@@ -10,7 +11,7 @@ const GET_TODOS_QUERY = gql<{ getTodos: Todo[] }, never>`
     }
 `;
 
-const GET_TODO_QUERY = gql<{ getTodo: Todo }, { id: string }>`
+export const GET_TODO_QUERY = gql<{ getTodo: Todo | undefined }, { id: string }>`
     query GetTodo($id: ID!) {
         getTodo(id: $id) {
             id
@@ -20,7 +21,7 @@ const GET_TODO_QUERY = gql<{ getTodo: Todo }, { id: string }>`
     }
 `;
 
-const ADD_TODO_MUTATION = gql<{ addTodo: Todo }, { text: string }>`
+export const ADD_TODO_MUTATION = gql<{ addTodo?: Todo }, { text: string }>`
     mutation AddTodo($text: String!) {
         addTodo(text: $text) {
             id
@@ -30,7 +31,7 @@ const ADD_TODO_MUTATION = gql<{ addTodo: Todo }, { text: string }>`
     }
 `;
 
-const REMOVE_TODO_MUTATION = gql<{ removeTodo: Todo }, { id: string }>`
+export const REMOVE_TODO_MUTATION = gql<{ removeTodo?: Todo }, { id: string }>`
     mutation RemoveTodo($id: ID!) {
         removeTodo(id: $id) {
             id
@@ -39,9 +40,9 @@ const REMOVE_TODO_MUTATION = gql<{ removeTodo: Todo }, { id: string }>`
         }
     }`;
 
-const UPDATE_TODO_MUTATION = gql<{ updateTodo: Todo }, { text: string }>`
-    mutation UpdateTodo($text: String!) {
-        updateTodo(text: $text) {
+export const UPDATE_TODO_MUTATION = gql<{ updateTodo?: Todo }, { id: string; text: string }>`
+    mutation UpdateTodo($id: String!, $text: String!) {
+        updateTodo(id: $id, text: $text) {
             id
             text
             completed
