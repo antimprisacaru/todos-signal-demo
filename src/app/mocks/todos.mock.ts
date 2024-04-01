@@ -11,6 +11,7 @@ import {
 import { Todo } from '../models/todo.model';
 import { randBoolean, randNumber, randText, randUuid } from '@ngneat/falso';
 import { GraphQLError } from 'graphql/error';
+import { isNil } from 'lodash';
 
 const todos: Todo[] = Array.from({ length: randNumber({ min: 10, max: 30 }) }).map(
   (): Todo => ({
@@ -64,7 +65,7 @@ export default function mockTodos(): GraphQLHandler[] {
       const foundTodo = todos.findIndex((t) => t.id === variables.id);
 
       await delay();
-      if (!foundTodo) {
+      if (isNil(foundTodo)) {
         return HttpResponse.json({
           data: { updateTodo: undefined },
           errors: [new GraphQLError(`Todo with ID ${variables.id} could not be found!`)],
@@ -72,7 +73,8 @@ export default function mockTodos(): GraphQLHandler[] {
       }
 
       // Update todo in the array
-      todos[foundTodo].text = variables.text;
+      todos[foundTodo].text = variables.text ?? todos[foundTodo].text;
+      todos[foundTodo].completed = variables.completed ?? todos[foundTodo].completed;
 
       return HttpResponse.json({ data: { updateTodo: todos[foundTodo] } });
     }),

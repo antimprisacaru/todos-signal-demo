@@ -1,0 +1,54 @@
+<mat-toolbar class="flex justify-between" color="primary">
+  <span>Todo List</span>
+  <button mat-raised-button color="accent" (click)="openUpsertDialog()">Add todo</button>
+</mat-toolbar>
+
+<section class="container mx-auto p-4 grid grid-cols-2 gap-4">
+  <div>
+    <h2 class="text-xl font-bold mb-2">Pending Todos</h2>
+    <mat-list cdkDropList [cdkDropListData]="store.pendingTodos()" cdkDropListSortingDisabled #pending="cdkDropList" [cdkDropListConnectedTo]="[completed]" (cdkDropListDropped)="changeTodoCompletion($event)">
+      @for(todo of store.pendingTodos(); track todo.id) {
+      <mat-list-item cdkDrag [cdkDragData]="todo">
+        <mat-icon matListItemIcon class="text-gray-500">check_circle</mat-icon>
+        <div matLine class="flex justify-between align-middle">
+          <span>{{ todo.text }}</span>
+          <div>
+            <button mat-icon-button class="text-blue-500" (click)="openUpsertDialog(todo)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button class="text-red-500" (click)="store.removeTodo({ id: todo.id })">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-list-item>
+      } @empty {
+      <p>No todos in the list.</p>
+      }
+    </mat-list>
+  </div>
+
+  <div>
+    <h2 class="text-xl font-bold mb-2">Complete Todos</h2>
+    <mat-list cdkDropList [cdkDropListData]="store.completeTodos()" cdkDropListSortingDisabled #completed="cdkDropList" [cdkDropListConnectedTo]="[pending]" (cdkDropListDropped)="changeTodoCompletion($event)">
+      @for(todo of store.completeTodos(); track todo.id) {
+      <mat-list-item cdkDrag [cdkDragData]="todo">
+        <mat-icon matListItemIcon class="text-green-500">check_circle</mat-icon>
+        <div matLine class="flex justify-between align-middle">
+          <span>{{ todo.text }}</span>
+          <div>
+            <button mat-icon-button class="text-blue-500" (click)="openUpsertDialog(todo)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button class="text-red-500" (click)="store.removeTodo({ id: todo.id })">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-list-item>
+      } @empty {
+      <p>No todos in the list.</p>
+      }
+    </mat-list>
+  </div>
+</section>
