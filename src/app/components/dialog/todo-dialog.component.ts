@@ -1,12 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { provideTodosStore, TodosStore } from '../../store/todos.store';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogContent,
-  MatDialogModule,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Todo } from '../../models/todo.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -37,9 +31,16 @@ export class TodoDialogComponent {
   protected readonly id?: string;
   protected readonly text: FormControl<string>;
 
-  constructor(private store: TodosStore, protected readonly dialogRef: MatDialogRef<TodoDialogComponent>, @Inject(MAT_DIALOG_DATA) data?: { todo?: Todo }) {
+  constructor(
+    private store: TodosStore,
+    protected readonly dialogRef: MatDialogRef<TodoDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) data?: { todo?: Todo }
+  ) {
     this.id = data?.todo?.id;
-    this.text = new FormControl(data?.todo?.text ?? '', { validators: [Validators.required, Validators.minLength(2)], nonNullable: true });
+    this.text = new FormControl(data?.todo?.text ?? '', {
+      validators: [Validators.required, Validators.minLength(2)],
+      nonNullable: true,
+    });
   }
 
   upsertTodo(): void {

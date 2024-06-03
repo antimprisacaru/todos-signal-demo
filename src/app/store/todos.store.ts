@@ -1,7 +1,7 @@
 import { patchState, signalStore, withComputed, withHooks, withMethods } from '@ngrx/signals';
 import { removeEntity, setEntities, setEntity, updateEntity, withEntities } from '@ngrx/signals/entities';
 import { Todo } from '../models/todo.model';
-import { withRequestStatus } from './request.feature';
+import { setErrors, setLoaded, setLoading, withRequestStatus } from './request.feature';
 import { computed, inject, Provider } from '@angular/core';
 import { Apollo, MutationResult } from 'apollo-angular';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -29,14 +29,14 @@ export const TodosStore = signalStore(
           tapResponse({
             next: (response: ApolloQueryResult<{ getTodos: Todo[] }>) =>
               patchState(store, setEntities(response.data.getTodos)),
-            error: (e: ApolloError[]) => patchState(store, { error: e[0].message }),
-            finalize: () => patchState(store, { loading: false }),
+            error: (errors: ApolloError[]) => patchState(store, setErrors(errors.map(e => e.message))),
+            finalize: () => patchState(store, setLoaded()),
           })
         )
       ),
       loadById: rxMethod<{ id: string }>(
         pipe(
-          tap(() => patchState(store, { loading: true })),
+          tap(() => patchState(store, setLoading())),
           switchMap((variables) => apollo.query({ query: GET_TODO_QUERY, variables })),
           tapResponse({
             next: (response: ApolloQueryResult<{ getTodo?: Todo }>) => {
@@ -44,14 +44,14 @@ export const TodosStore = signalStore(
                 patchState(store, setEntity(response.data.getTodo));
               }
             },
-            error: (e: ApolloError[]) => patchState(store, { error: e[0].message }),
-            finalize: () => patchState(store, { loading: false }),
+            error: (errors: ApolloError[]) => patchState(store, setErrors(errors.map(e => e.message))),
+            finalize: () => patchState(store, setLoaded()),
           })
         )
       ),
       addTodo: rxMethod<{ text: string }>(
         pipe(
-          tap(() => patchState(store, { loading: true })),
+          tap(() => patchState(store, setLoading())),
           switchMap((variables) => apollo.mutate({ mutation: ADD_TODO_MUTATION, variables })),
           tapResponse({
             next: (response: MutationResult<{ addTodo?: Todo }>) => {
@@ -59,14 +59,14 @@ export const TodosStore = signalStore(
                 patchState(store, setEntity(response.data.addTodo));
               }
             },
-            error: (e: ApolloError[]) => patchState(store, { error: e[0].message }),
-            finalize: () => patchState(store, { loading: false }),
+            error: (errors: ApolloError[]) => patchState(store, setErrors(errors.map(e => e.message))),
+            finalize: () => patchState(store, setLoaded()),
           })
         )
       ),
       removeTodo: rxMethod<{ id: string }>(
         pipe(
-          tap(() => patchState(store, { loading: true })),
+          tap(() => patchState(store, setLoading())),
           switchMap((variables) => apollo.mutate({ mutation: REMOVE_TODO_MUTATION, variables })),
           tapResponse({
             next: (response: MutationResult<{ removeTodo?: Todo }>) => {
@@ -74,14 +74,14 @@ export const TodosStore = signalStore(
                 patchState(store, removeEntity(response.data.removeTodo.id));
               }
             },
-            error: (e: ApolloError[]) => patchState(store, { error: e[0].message }),
-            finalize: () => patchState(store, { loading: false }),
+            error: (errors: ApolloError[]) => patchState(store, setErrors(errors.map(e => e.message))),
+            finalize: () => patchState(store, setLoaded()),
           })
         )
       ),
       updateTodo: rxMethod<{ id: string; text?: string; completed?: boolean }>(
         pipe(
-          tap(() => patchState(store, { loading: true })),
+          tap(() => patchState(store, setLoading())),
           switchMap((variables) => apollo.mutate({ mutation: UPDATE_TODO_MUTATION, variables })),
           tapResponse({
             next: (response: MutationResult<{ updateTodo?: Todo }>) => {
@@ -89,8 +89,8 @@ export const TodosStore = signalStore(
                 patchState(store, updateEntity({ id: response.data.updateTodo.id, changes: response.data.updateTodo }));
               }
             },
-            error: (e: ApolloError[]) => patchState(store, { error: e[0].message }),
-            finalize: () => patchState(store, { loading: false }),
+            error: (errors: ApolloError[]) => patchState(store, setErrors(errors.map(e => e.message))),
+            finalize: () => patchState(store, setLoaded()),
           })
         )
       ),

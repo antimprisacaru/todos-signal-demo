@@ -5,7 +5,7 @@ import { flatMap } from 'lodash';
 
 const mockHandlers = [mockTodos];
 
-export function initMockHandlers(injector: EnvironmentInjector): Array<RequestHandler> {
+export function initMockHandlers(injector: EnvironmentInjector): ReadonlyArray<RequestHandler> {
   return flatMap(
     mockHandlers.map((fn) => runInInjectionContext(injector, () => fn()))
   );
